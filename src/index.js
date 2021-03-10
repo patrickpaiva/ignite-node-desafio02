@@ -39,7 +39,17 @@ function checksCreateTodosUserAvailability(request, response, next) {
 }
 
 function checksTodoExists(request, response, next) {
-  // Complete aqui
+  const { user } = request
+
+  const checkIfTodoExists = user.todos.some(todo => todo.id === id)
+
+  if (!checkIfTodoExists) {
+    return response.status(404).json({ error: "Todo id not found!" })
+  }
+
+  request.todo = todo
+
+  next()
 }
 
 function findUserById(request, response, next) {
