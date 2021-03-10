@@ -40,6 +40,7 @@ function checksCreateTodosUserAvailability(request, response, next) {
 
 function checksTodoExists(request, response, next) {
   const { user } = request
+  const { id } = request.params
 
   const checkIfTodoExists = user.todos.some(todo => todo.id === id)
 
