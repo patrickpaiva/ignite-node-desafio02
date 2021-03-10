@@ -33,22 +33,35 @@ function checksCreateTodosUserAvailability(request, response, next) {
   if (user.todos.length < 10) {
     return next()
   } else {
-    return response.status(401).json({ error: "You exceeded your limit of Todos"})
+    return response.status(403).json({ error: "You exceeded your limit of Todos"})
   }
 
 }
 
 function checksTodoExists(request, response, next) {
-  const { user } = request
+  const { username } = request.headers
   const { id } = request.params
 
+  //Validar usuário
+  const user = users.find(item => item.username === username)
+
+  if (!user) {
+    return response.status(404).json({error: "user not found!"})
+  }
+  //Validar o id passado é uuid
+  const checkIdUuid = validate(id)
+  if (!checkIdUuid) {
+    return response.status(400).json({error: "Id not valid"})
+  }
+  //Validar o id passado se pertence a um TODO
   const checkIfTodoExists = user.todos.some(todo => todo.id === id)
 
   if (!checkIfTodoExists) {
     return response.status(404).json({ error: "Todo id not found!" })
   }
 
-  request.todo = todo
+  request.todo = user.todos.find(todo => todo.id === id)
+  request.user = user
 
   next()
 }
